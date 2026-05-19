@@ -21,7 +21,6 @@ import (
 	"github.com/EvolutionAPI/evolution-go/pkg/utils"
 	whatsmeow_service "github.com/EvolutionAPI/evolution-go/pkg/whatsmeow/service"
 	"go.mau.fi/whatsmeow"
-	"go.mau.fi/whatsmeow/types"
 )
 
 type InstanceService interface {
@@ -84,7 +83,7 @@ type ConnectStruct struct {
 type StatusStruct struct {
 	Connected bool
 	LoggedIn  bool
-	myJid     *types.JID
+	Jid       string `json:"jid"`
 	Name      string
 }
 
@@ -384,17 +383,17 @@ func (i instances) Status(instance *instance_model.Instance) (*StatusStruct, err
 	isConnected := client.IsConnected()
 	isLoggedIn := client.IsLoggedIn()
 
-	var myJid *types.JID
+	var jid string
 	var name string
-	if isLoggedIn {
-		myJid = client.Store.ID
+	if isLoggedIn && client.Store.ID != nil {
+		jid = client.Store.ID.String()
 		name = client.Store.PushName
 	}
 
 	status := &StatusStruct{
 		Connected: isConnected,
 		LoggedIn:  isLoggedIn,
-		myJid:     myJid,
+		Jid:       jid,
 		Name:      name,
 	}
 
